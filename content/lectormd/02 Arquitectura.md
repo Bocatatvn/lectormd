@@ -86,19 +86,31 @@ docker-compose.yml
     └── imagen mysql:8.0
 ```
 
+## Rutas estáticas
+
+Los recursos estáticos (CSS, JS, imágenes) usan rutas **absolutas** con `/` inicial:
+
+```html
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/app.js"></script>
+```
+
+Esto asegura que funcionen desde cualquier URL compartible (ej. `/lectormd/02%20Arquitectura.md`), evitando que el navegador las resuelva contra la ruta del documento.
+
 ## Flujo de petición
 
 ```
-Navegador → /main/bienvenida.md
+Navegador → /lectormd/02%20Arquitectura.md
   → Apache (mod_rewrite: ¿existe el archivo? No)
   → index.php (router)
       → ¿Coincide con /api/*? No
       → Sirve index.html (SPA)
   → JavaScript parsea location.pathname
-      → projectId = "main", filePath = "bienvenida.md"
-      → switchProject("main")
-          → GET /api/projects/main/files (lista de archivos)
-      → loadFile("main", "bienvenida.md")
-          → GET /api/projects/main/files/bienvenida.md (JSON con metadata + html)
+      → projectId = "lectormd", filePath = "02 Arquitectura.md"
+      → switchProject("lectormd")
+          → GET /api/projects/lectormd/files (lista de archivos)
+      → loadFile("lectormd", "02 Arquitectura.md")
+          → encodeURIComponent → /api/projects/lectormd/files/02%20Arquitectura.md
+          → GET (JSON con metadata + html)
       → renderiza el documento
 ```

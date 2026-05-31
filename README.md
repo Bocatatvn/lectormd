@@ -18,14 +18,21 @@
 
 ```bash
 docker compose up -d
-# Abre http://localhost:9000
+# Abre http://localhost:8080
 ```
 
 Personaliza el puerto en `.env`:
 
 ```
-WEB_PORT=9000
-DB_PORT=3307
+WEB_PORT=8080
+DB_PORT=3306
+```
+
+Personaliza el puerto en `.env`:
+
+```
+WEB_PORT=8080
+DB_PORT=3306
 ```
 
 ## Configuración de proyectos
@@ -35,17 +42,17 @@ Los proyectos se definen en `config/projects.json`:
 ```json
 [
   {
-    "id": "main",
-    "name": "Principal",
-    "dir": "content/proyecto1",
-    "exclude": ["img"]
+    "id": "lectormd",
+    "name": "LectorMD",
+    "dir": "content/lectormd",
+    "exclude": ["img, folder"]
   },
   {
-    "id": "secreto",
-    "name": "Proyecto Secreto",
-    "dir": "content/secreto1",
+    "id": "secret",
+    "name": "Proyecto Secret",
+    "dir": "content/secret",
     "exclude": ["img"],
-    "token": "secreto123"
+    "token": "secret123"
   }
 ]
 ```
@@ -64,10 +71,8 @@ Los proyectos se definen en `config/projects.json`:
 lectormd/
 ├── config/projects.json    ← Definición de proyectos
 ├── content/                ← Contenido markdown por proyecto
-│   ├── proyecto1/          ← Proyecto "Principal"
-│   ├── proyecto2/          ← Proyecto "Secundario"
-│   ├── secreto1/           ← Proyecto con token
-│   └── lectormd/           ← Documentación del propio LectorMD
+│   ├── lectormd/           ← Documentación del propio LectorMD
+│   └── secret/             ← Proyecto protegido con token
 ├── docker/php/             ← Dockerfile + Apache config + php.ini
 ├── docs/                   ← Documentación del proyecto
 ├── public/

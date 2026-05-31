@@ -15,19 +15,19 @@ Todas las rutas API devuelven JSON con `Content-Type: application/json; charset=
 Lista todos los proyectos disponibles.
 
 ```bash
-curl http://localhost:9000/api/projects
+curl http://localhost:8080/api/projects
 ```
 
 ```json
 [
   {
-    "id": "main",
-    "name": "Principal",
+    "id": "lectormd",
+    "name": "LectorMD",
     "locked": false
   },
   {
-    "id": "secreto",
-    "name": "Proyecto Secreto",
+    "id": "secret",
+    "name": "Proyecto Secret",
     "locked": true
   }
 ]
@@ -44,9 +44,9 @@ curl http://localhost:9000/api/projects
 Valida un token para el proyecto.
 
 ```bash
-curl -X POST http://localhost:9000/api/projects/secreto/unlock \
+curl -X POST http://localhost:8080/api/projects/secret/unlock \
   -H 'Content-Type: application/json' \
-  -d '{"token":"secreto123"}'
+  -d '{"token":"secret123"}'
 ```
 
 **Respuesta exitosa:**
@@ -64,14 +64,15 @@ curl -X POST http://localhost:9000/api/projects/secreto/unlock \
 Lista los archivos de un proyecto.
 
 ```bash
-curl http://localhost:9000/api/projects/main/files
+curl http://localhost:8080/api/projects/lectormd/files
 ```
 
 ```json
 {
   "files": [
-    { "path": "bienvenida.md", "name": "bienvenida", "mtime": 1717000000 },
-    { "path": "subcarpeta/otro-doc.md", "name": "otro-doc", "mtime": 1717000000 }
+    { "path": "01 Index.md", "name": "01 Index", "mtime": 1717000000 },
+    { "path": "02 Arquitectura.md", "name": "02 Arquitectura", "mtime": 1717000000 },
+    { "path": "Manual/manual-de-usuario.md", "name": "manual-de-usuario", "mtime": 1717000000 }
   ]
 }
 ```
@@ -79,8 +80,8 @@ curl http://localhost:9000/api/projects/main/files
 Los proyectos bloqueados requieren la cookie `token_{id}`:
 
 ```bash
-curl --cookie "token_secreto=secreto123" \
-  http://localhost:9000/api/projects/secreto/files
+curl --cookie "token_secret=secret123" \
+  http://localhost:8080/api/projects/secret/files
 ```
 
 ## `GET /api/projects/{id}/files/{path}`
@@ -88,21 +89,21 @@ curl --cookie "token_secreto=secreto123" \
 Obtiene el contenido de un archivo.
 
 ```bash
-curl http://localhost:9000/api/projects/main/files/bienvenida.md
+curl "http://localhost:8080/api/projects/lectormd/files/02%20Arquitectura.md"
 ```
 
 ```json
 {
-  "path": "bienvenida.md",
-  "name": "bienvenida",
-  "mtime": 1717000000,
+  "path": "02 Arquitectura.md",
+  "name": "02 Arquitectura",
+  "mtime": 1780196526,
   "metadata": {
-    "title": "Bienvenida",
-    "date": "2026-05-30",
-    "tags": ["inicio"]
+    "title": "Arquitectura",
+    "date": "2026-05-31",
+    "tags": ["arquitectura", "desarrollo", "tecnologías"]
   },
-  "body": "# Bienvenida\n\nContenido...",
-  "html": "<h1>Bienvenida</h1>\n<p>Contenido...</p>"
+  "body": "## Stack tecnológico\n\n| Componente ...",
+  "html": "<h2>Stack tecnológico</h2>\n<p>...</p>"
 }
 ```
 

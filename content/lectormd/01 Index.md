@@ -29,7 +29,7 @@ LectorMD es un lector y visualizador de documentación basado en markdown. Convi
 docker compose up -d
 ```
 
-Luego abre [http://localhost:9000](http://localhost:9000).
+Luego abre [http://localhost:8080](http://localhost:8080).
 
 ## Estructura del proyecto
 
@@ -47,9 +47,7 @@ lectormd/
 
 ## Proyectos incluidos
 
-| Proyecto   | ID        | Ruta                    | Protección |
-|------------|-----------|-------------------------|------------|
-| Principal  | `main`    | `content/proyecto1/`    | —          |
-| Secundario | `extra`   | `content/proyecto2/`    | —          |
-| Secreto    | `secreto` | `content/secreto1/`     | 🔒 Token   |
-| LectorMD   | `lectormd`| `content/lectormd/`     | —          |
+| Proyecto     | ID        | Ruta                    | Protección |
+|--------------|-----------|-------------------------|------------|
+| LectorMD     | `lectormd`| `content/lectormd/`     | —          |
+| Proyecto Secret | `secret` | `content/secret/`       | 🔒 Token   |

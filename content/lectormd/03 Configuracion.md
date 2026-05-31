@@ -11,8 +11,8 @@ image_wrapper: true
 ## Variables de entorno (`.env`)
 
 ```
-WEB_PORT=9000            # Puerto del servidor web
-DB_PORT=3307             # Puerto de MySQL (mapeado)
+WEB_PORT=8080            # Puerto del servidor web (cambiable)
+DB_PORT=3306             # Puerto de MySQL (mapeado)
 MYSQL_DATABASE=lectormd
 MYSQL_ROOT_PASSWORD=test
 CONTENT_DIR=./content    # Directorio raíz de contenido
@@ -24,10 +24,10 @@ Cada proyecto se define con un objeto JSON:
 
 ```json
 {
-  "id": "main",
-  "name": "Principal",
-  "dir": "content/proyecto1",
-  "exclude": ["img"],
+  "id": "lectormd",
+  "name": "LectorMD",
+  "dir": "content/lectormd",
+  "exclude": ["img, folder"],
   "token": null
 }
 ```
@@ -63,11 +63,17 @@ Si un proyecto tiene `token`, el servidor devuelve 403 hasta que el cliente env�
 ```json
 [
   {
-    "id": "secreto",
-    "name": "Proyecto Secreto",
-    "dir": "content/secreto1",
+    "id": "lectormd",
+    "name": "LectorMD",
+    "dir": "content/lectormd",
+    "exclude": ["img, folder"]
+  },
+  {
+    "id": "secret",
+    "name": "Proyecto Secret",
+    "dir": "content/secret",
     "exclude": ["img"],
-    "token": "secreto123"
+    "token": "secret123"
   }
 ]
 ```
@@ -86,7 +92,8 @@ RewriteRule ^(.*)$ index.php [QSA,L]
 Esto permite:
 - Archivos estáticos (`css/style.css`, `js/app.js`) se sirven directamente
 - Rutas API (`/api/projects/...`) son manejadas por `index.php`
-- URLs compartibles (`/main/archivo.md`) también caen en `index.php`, que sirve el HTML de la SPA
+- URLs compartibles (`/lectormd/02%20Arquitectura.md`) también caen en `index.php`, que sirve el HTML de la SPA
+- Las rutas a recursos estáticos en `index.html` deben ser **absolutas** (`/css/style.css`) para que funcionen desde cualquier URL compartible
 
 ## Puerto personalizado
 
@@ -94,6 +101,7 @@ Para cambiar el puerto, edita `.env` y reinicia:
 
 ```
 WEB_PORT=8080
+DB_PORT=3306
 ```
 
 Luego `docker compose down && docker compose up -d`.

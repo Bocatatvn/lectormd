@@ -10,7 +10,7 @@ image_wrapper: true
 
 ## Primeros pasos
 
-Accede a LectorMD desde el navegador en `http://localhost:9000`. Verás el panel lateral con el menú de navegación.
+Accede a LectorMD desde el navegador en `http://localhost:8080`. Verás el panel lateral con el menú de navegación.
 
 ![Vista general](img/libro01.png)
 
@@ -55,8 +55,9 @@ Escribe en el campo de búsqueda para filtrar archivos por nombre o ruta. El fil
 Cada archivo tiene una URL única que puedes compartir:
 
 ```
-http://localhost:9000/main/bienvenida.md
-http://localhost:9000/secreto/mascarpetas/mas%20archivo.md
+http://localhost:8080/lectormd/02%20Arquitectura.md
+http://localhost:8080/lectormd/01%20Index.md
+http://localhost:8080/secret/index.md
 ```
 
 Los espacios en los nombres de archivo se codifican automáticamente como `%20`. Al abrir una URL compartible, el proyecto y archivo se cargan automáticamente.
@@ -117,8 +118,8 @@ image_wrapper: true
 Puedes enlazar a otros archivos del proyecto de forma relativa:
 
 ```markdown
-[Ver guía](guia-markdown.md)
-[Documento en subcarpeta](subcarpeta/otro-doc.md)
+[Ver arquitectura](02%20Arquitectura.md)
+[Manual de usuario](Manual/manual-de-usuario.md)
 ```
 
 O usar URLs absolutas externas:
