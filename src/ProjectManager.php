@@ -50,6 +50,11 @@ class ProjectManager
         return $p['token'] === $token;
     }
 
+    public function projectExists(string $projectId): bool
+    {
+        return isset($this->projects[$projectId]);
+    }
+
     public function getContentManager(string $projectId, ?string $token = null): ?ContentManager
     {
         $p = $this->projects[$projectId] ?? null;

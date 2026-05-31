@@ -16,6 +16,11 @@ class ContentManager
         $this->excludeDirs = $excludeDirs;
     }
 
+    public function getContentDir(): string
+    {
+        return $this->contentDir;
+    }
+
     private function shouldExclude(string $path): bool
     {
         foreach ($this->excludeDirs as $dir) {

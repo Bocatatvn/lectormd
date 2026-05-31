@@ -68,6 +68,33 @@ if (preg_match('#^/api/projects/([^/]+)/files(?:/(.+))?$#', $uri, $m) && $method
     exit;
 }
 
+// ── Archivos estáticos (imágenes, assets) desde content/ ──
+if ($method === 'GET' && preg_match('#^/([^/]+)/(.+)$#', $uri, $m)) {
+    $projId = $m[1];
+    $relPath = rawurldecode($m[2]);
+
+    if ($projects->projectExists($projId)) {
+        $cm = $projects->getContentManager($projId, $_COOKIE['token_' . $projId] ?? null);
+        if ($cm === null) {
+            err(403, 'Acceso denegado');
+        } else {
+            $fullPath = $cm->getContentDir() . '/' . ltrim($relPath, '/');
+            if (file_exists($fullPath) && is_file($fullPath)) {
+                $ext = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
+                $imgExts = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'bmp', 'ico', 'tiff', 'tif', 'mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
+                if (in_array($ext, $imgExts)) {
+                    $mime = mime_content_type($fullPath);
+                    if ($mime === false) $mime = 'application/octet-stream';
+                    header('Content-Type: ' . $mime);
+                    header('Cache-Control: public, max-age=31536000');
+                    readfile($fullPath);
+                    exit;
+                }
+            }
+        }
+    }
+}
+
 // ── Ruta por defecto / SPA con URL compartible ──
 header('Content-Type: text/html; charset=utf-8');
 readfile(__DIR__ . '/index.html');

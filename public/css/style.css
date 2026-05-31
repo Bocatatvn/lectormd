@@ -427,6 +427,13 @@ body {
   margin: 16px 0;
 }
 
+#doc-body video {
+  max-width: 100%;
+  border-radius: 8px;
+  margin: 16px 0;
+  display: block;
+}
+
 #doc-body hr {
   border: none;
   border-top: 1px solid var(--border);

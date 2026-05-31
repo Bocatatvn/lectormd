@@ -100,7 +100,14 @@ class MarkdownParser
 
     private function parseImages(string $text): string
     {
-        return preg_replace('/!\[([^\]]*)\]\(([^)]+)\)/', '<img src="$2" alt="$1">', $text);
+        $videoExts = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
+        return preg_replace_callback('/!\[([^\]]*)\]\(([^)]+)\)/', function ($m) use ($videoExts) {
+            $ext = strtolower(pathinfo($m[2], PATHINFO_EXTENSION));
+            if (in_array($ext, $videoExts)) {
+                return '<video src="' . $m[2] . '" alt="' . $m[1] . '" controls preload="metadata"></video>';
+            }
+            return '<img src="' . $m[2] . '" alt="' . $m[1] . '">';
+        }, $text);
     }
 
     private function parseLinks(string $text): string
@@ -181,7 +188,10 @@ class MarkdownParser
     private function parseParagraphs(string $text): string
     {
         $blocks = 'h[1-6]|ul|ol|li|blockquote|pre|hr|table|p|div';
-        $text = preg_replace('/^(?!\s*<(?:' . $blocks . '))(.+)$/m', '<p>$1</p>', $text);
+        $text = preg_replace_callback('/^(?!\s*<(?:' . $blocks . '))(.+)$/m', function ($m) {
+            if (str_contains($m[0], '%%%CODEBLOCK')) return $m[0];
+            return '<p>' . $m[1] . '</p>';
+        }, $text);
         $text = preg_replace('/<\/p>\s*<p>/', "</p>\n<p>", $text);
         return $text;
     }
