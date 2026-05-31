@@ -1,0 +1,10 @@
+# Puertos de la aplicación
+WEB_PORT=8080
+DB_PORT=3306
+
+# Base de datos
+MYSQL_DATABASE=lectormd
+MYSQL_ROOT_PASSWORD=test
+
+# Configuración de la aplicación
+CONTENT_DIR=./content

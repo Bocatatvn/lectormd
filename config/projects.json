@@ -1,0 +1,15 @@
+[
+  {
+    "id": "lectormd",
+    "name": "LectorMD",
+    "dir": "content/lectormd",
+    "exclude": ["img, folder"]
+  },  
+  {
+    "id": "secret",
+    "name": "Proyecto Secret",
+    "dir": "content/secret",
+    "exclude": ["img"],
+    "token": "secret123"
+  }
+]

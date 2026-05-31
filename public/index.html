@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LectorMD</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <button id="menu-toggle" class="open" aria-label="Abrir menú">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav id="menu" class="open">
+      <header>
+        <div id="project-selector">
+          <select id="project-select"></select>
+        </div>
+        <input type="text" id="search" placeholder="Buscar...">
+      </header>
+      <div id="file-list"></div>
+      <footer>
+        <span id="status">● Conectado</span>
+        <button id="theme-toggle" title="Cambiar tema">🌙</button>
+      </footer>
+    </nav>
+
+    <main id="content">
+      <div id="welcome">
+        <h2>Bienvenido a LectorMD</h2>
+        <p>Selecciona un archivo del menú para empezar.</p>
+      </div>
+      <div id="doc-viewer" style="display:none;">
+        <div id="doc-toolbar">
+          <button id="download-btn" title="Descargar archivo">⬇ Descargar</button>
+        </div>
+        <div id="doc-meta"></div>
+        <div id="doc-body"></div>
+      </div>
+    </main>
+
+    <div id="token-dialog" style="display:none;">
+      <div id="token-dialog-box">
+        <h3 id="token-dialog-title">Acceso restringido</h3>
+        <p id="token-dialog-desc">Introduce el token de acceso:</p>
+        <input type="password" id="token-input" placeholder="Token">
+        <div id="token-dialog-actions">
+          <button id="token-cancel">Cancelar</button>
+          <button id="token-submit">Acceder</button>
+        </div>
+        <p id="token-error" style="display:none;color:#f38ba8;font-size:0.8rem;"></p>
+      </div>
+    </div>
+  </div>
+  <script src="js/app.js"></script>
+</body>
+</html>
