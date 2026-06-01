@@ -17,7 +17,6 @@ $projects = new App\ProjectManager(__DIR__ . '/../config/projects.json');
 
 function jsonHeader(): void {
     header('Content-Type: application/json; charset=utf-8');
-    header('Access-Control-Allow-Origin: *');
 }
 
 function err(int $code, string $msg): never {
@@ -39,6 +38,11 @@ if (preg_match('#^/api/projects/([^/]+)/unlock$#', $uri, $m) && $method === 'POS
     $input = json_decode(file_get_contents('php://input'), true);
     $token = $input['token'] ?? '';
     if ($projects->isValidToken($m[1], $token)) {
+        setcookie('token_' . $m[1], $token, [
+            'expires' => time() + 30 * 86400,
+            'path'    => '/',
+            'samesite' => 'Strict',
+        ]);
         echo json_encode(['ok' => true]);
     } else {
         echo json_encode(['ok' => false, 'error' => 'Token inválido']);
@@ -68,6 +72,29 @@ if (preg_match('#^/api/projects/([^/]+)/files(?:/(.+))?$#', $uri, $m) && $method
     exit;
 }
 
+// ── Unlock via URL (GET /{id}/...?token=xxx) ──
+if ($method === 'GET' && !empty($_GET['token'])) {
+    $p = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    if (preg_match('#^/([^/]+)#', $p, $m)) {
+        $projId = $m[1];
+        if ($projects->projectExists($projId)) {
+            $token = $_GET['token'];
+            if ($projects->isValidToken($projId, $token)) {
+                setcookie('token_' . $projId, $token, [
+                    'expires' => time() + 30 * 86400,
+                    'path'    => '/',
+                    'samesite' => 'Strict',
+                ]);
+            }
+            $qs = $_GET;
+            unset($qs['token']);
+            $redirect = $p . (empty($qs) ? '' : '?' . http_build_query($qs));
+            header('Location: ' . $redirect);
+            exit;
+        }
+    }
+}
+
 // ── Archivos estáticos (imágenes, assets) desde content/ ──
 if ($method === 'GET' && preg_match('#^/([^/]+)/(.+)$#', $uri, $m)) {
     $projId = $m[1];
@@ -78,8 +105,8 @@ if ($method === 'GET' && preg_match('#^/([^/]+)/(.+)$#', $uri, $m)) {
         if ($cm === null) {
             err(403, 'Acceso denegado');
         } else {
-            $fullPath = $cm->getContentDir() . '/' . ltrim($relPath, '/');
-            if (file_exists($fullPath) && is_file($fullPath)) {
+            $fullPath = $cm->resolveSafePath($relPath);
+            if ($fullPath !== null) {
                 $ext = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
                 $imgExts = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'bmp', 'ico', 'tiff', 'tif', 'mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
                 if (in_array($ext, $imgExts)) {

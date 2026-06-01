@@ -74,14 +74,6 @@ async function switchProject(projectId) {
       await promptToken(project);
       return;
     }
-    try {
-      await fetchJSON(`/api/projects/${projectId}/files`, {
-        headers: { 'Cookie': `token_${projectId}=${encodeURIComponent(token)}` },
-      });
-    } catch {
-      await promptToken(project);
-      return;
-    }
   }
 
   state.activeProject = projectId;
@@ -95,11 +87,7 @@ async function switchProject(projectId) {
 
 async function loadFiles(projectId) {
   try {
-    const token = getCookie('token_' + projectId);
-    const opts = token
-      ? { headers: { 'Cookie': `token_${projectId}=${encodeURIComponent(token)}` } }
-      : {};
-    const data = await fetchJSON(`/api/projects/${projectId}/files`, opts);
+    const data = await fetchJSON(`/api/projects/${projectId}/files`);
     state.files = data.files;
     renderFileList();
   } catch (e) {
@@ -113,12 +101,8 @@ async function loadFiles(projectId) {
 async function loadFile(projectId, path) {
   try {
     state.selectedPath = path;
-    const token = getCookie('token_' + projectId);
-    const opts = token
-      ? { headers: { 'Cookie': `token_${projectId}=${encodeURIComponent(token)}` } }
-      : {};
     const encPath = path.split('/').map(encodeURIComponent).join('/');
-    const data = await fetchJSON(`/api/projects/${projectId}/files/${encPath}`, opts);
+    const data = await fetchJSON(`/api/projects/${projectId}/files/${encPath}`);
     state.currentFile = data;
     renderFile(data);
   } catch (e) {
@@ -155,7 +139,6 @@ function promptToken(project) {
         body: JSON.stringify({ token }),
       }).then(r => {
         if (r.ok) {
-          setCookie('token_' + project.id, token, 30);
           cleanup();
           resolve(true);
           switchProject(project.id);
@@ -317,7 +300,7 @@ el.docBody.addEventListener('click', (e) => {
   if (!a) return;
   const href = a.getAttribute('href');
   if (!href) return;
-  if (/^(https?:|mailto:|#|\/\/)/i.test(href)) return;
+  if (/^(https?:|mailto:|#|\/\/|javascript:)/i.test(href)) return;
   e.preventDefault();
   const path = resolvePath(state.currentFile?.path || '', href);
   loadFile(state.activeProject, path);

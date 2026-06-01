@@ -11,7 +11,8 @@ class ContentManager
 
     public function __construct(string $contentDir, array $excludeDirs = ['img'])
     {
-        $this->contentDir = rtrim($contentDir, '/');
+        $resolved = realpath($contentDir);
+        $this->contentDir = rtrim($resolved !== false ? $resolved : $contentDir, '/');
         $this->parser = new MarkdownParser();
         $this->excludeDirs = $excludeDirs;
     }
@@ -19,6 +20,14 @@ class ContentManager
     public function getContentDir(): string
     {
         return $this->contentDir;
+    }
+
+    public function resolveSafePath(string $path): ?string
+    {
+        $full = realpath($this->contentDir . '/' . ltrim($path, '/'));
+        if ($full === false) return null;
+        if (!str_starts_with($full, $this->contentDir)) return null;
+        return $full;
     }
 
     private function shouldExclude(string $path): bool
@@ -55,10 +64,8 @@ class ContentManager
 
     public function getFile(string $path): ?array
     {
-        $fullPath = $this->contentDir . '/' . ltrim($path, '/');
-        if (!file_exists($fullPath)) {
-            return null;
-        }
+        $fullPath = $this->resolveSafePath($path);
+        if ($fullPath === null) return null;
 
         $content = file_get_contents($fullPath);
         $ext = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));

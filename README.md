@@ -12,20 +12,17 @@
 - **URLs compartibles** — cada archivo tiene su URL única (`/idproyecto/ruta/archivo`)
 - **Menú colapsable** — panel lateral con búsqueda y agrupación por subcarpetas
 - **Descarga de `.md`** — botón para descargar el markdown original
+- **Soporte de vídeo** — archivos `.mp4`/`.webm`/`.ogg` se renderizan como `<video controls>`
+- **Assets estáticos** — imágenes y vídeos se sirven directamente desde `content/` con MIME type correcto
 - **Docker** — entorno reproducible con PHP 8.2 + Apache + MySQL
+- **Desbloqueo por URL** — `?token=xxx` en la URL para compartir acceso protegido
+- **Seguridad** — rutas sanitizadas con `realpath()`, cookies `SameSite=Strict`, sin CORS abierto
 
 ## Inicio rápido
 
 ```bash
 docker compose up -d
 # Abre http://localhost:8080
-```
-
-Personaliza el puerto en `.env`:
-
-```
-WEB_PORT=8080
-DB_PORT=3306
 ```
 
 Personaliza el puerto en `.env`:
@@ -74,7 +71,6 @@ lectormd/
 │   ├── lectormd/           ← Documentación del propio LectorMD
 │   └── secret/             ← Proyecto protegido con token
 ├── docker/php/             ← Dockerfile + Apache config + php.ini
-├── docs/                   ← Documentación del proyecto
 ├── public/
 │   ├── index.php           ← Router API
 │   ├── index.html          ← SPA shell
@@ -87,6 +83,14 @@ lectormd/
     └── Database.php        ← Conexión PDO a MySQL (opcional)
 ```
 
+## Seguridad
+
+- **Path traversal**: todas las rutas se resuelven con `realpath()` y se verifica que estén dentro del directorio del proyecto (`ContentManager::resolveSafePath()`)
+- **Cookies**: se setean desde el servidor con `SameSite=Strict`, sin cabecera `Access-Control-Allow-Origin`
+- **XSS**: el contenido markdown se escapa con `htmlspecialchars()` antes de parsear; los enlaces `javascript:` son bloqueados por el frontend
+- **Autenticación**: los tokens se envían automáticamente via cookies del navegador (sin cabeceras manuales en fetch)
+- **Desbloqueo por URL**: `GET /{proyecto}?token=xxx` — valida el token, setea la cookie y redirige sin el token en la URL
+
 ## API REST
 
 | Método | Ruta                                      | Descripción                      |
@@ -95,6 +99,8 @@ lectormd/
 | POST   | `/api/projects/{id}/unlock`               | Valida token                     |
 | GET    | `/api/projects/{id}/files`                | Lista archivos de un proyecto    |
 | GET    | `/api/projects/{id}/files/{ruta}`         | Obtiene contenido de un archivo  |
+| GET    | `/{id}/{ruta}`                            | Sirve assets estáticos (imgs, videos) desde content/ |
+| GET    | `/{id}?token=xxx`                         | Desbloquea proyecto por URL y redirige              |
 
 ## Tecnologías
 
@@ -116,7 +122,7 @@ El proyecto incluye documentación completa accesible desde la propia aplicació
 | `api.md`                | Referencia completa de endpoints REST        |
 | `manual-de-usuario.md`  | Guía de uso paso a paso                      |
 
-Accede desde: `http://localhost:9000/lectormd`
+Accede desde: `http://localhost:8080/lectormd`
 
 ## Licencia
 

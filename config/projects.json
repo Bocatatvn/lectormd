@@ -4,7 +4,7 @@
     "name": "LectorMD",
     "dir": "content/lectormd",
     "exclude": ["img, folder"]
-  },  
+  },
   {
     "id": "secret",
     "name": "Proyecto Secret",
